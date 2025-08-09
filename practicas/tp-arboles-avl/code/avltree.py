@@ -48,11 +48,14 @@ def insert(tree, element, k):
 
     if tree.root==None:
         tree.root= new
+        new.bf=0
+        new.h=0
         return k
     
     nodo= insertR(tree.root, new)
     if nodo!=None:
         new.parent= nodo
+        reBalance(tree)
         return k
     return None
     
@@ -79,14 +82,17 @@ def delete(tree, element):
         return None
     
     if nodo==tree.root:
-        padre = BinaryTreeNode()
+        padre = AVLnode()
         padre.leftnode = tree.root
         tree.root.parent = padre
         llave = deleteR(tree.root)
         tree.root = padre.leftnode
+        reBalance(tree)
         return llave
     
-    return deleteR(nodo)
+    llave= deleteR(nodo)
+    reBalance(tree)
+    return llave
        
 #
 def deleteR(nodo):
@@ -134,3 +140,144 @@ def menorMayores(nodo):
         return nodo
     
     return menorMayores(nodo.leftnode)
+
+#
+def access(tree, k):
+    if tree.root==None:
+        return None
+    
+    if tree.root.key==k:
+        return tree.root.value
+    
+    nodo= accessR(tree.root, k)
+    if nodo!=None:
+        return nodo.value
+    return None
+    
+#
+def accessR(current, k):
+    if current==None:
+        return None
+
+    if current.key==k:
+        return current
+    
+    if current.key>k:
+        return accessR(current.leftnode, k)
+    else:
+        return accessR(current.rightnode, k)
+
+#
+def update(tree, element, k):
+    if tree.root==None:
+        return None
+    
+    if tree.root.key==k:
+        tree.root.value=element
+
+    node= updateR(tree.root, k)
+    if node!=None:
+        node.value= element
+        return k
+    return None
+
+#
+def updateR(current, k):
+    if current==None:
+        return None
+    
+    if current.key==k:
+        return current
+    
+    if current.key>k:
+        return updateR(current.leftnode, k)
+    else:
+        return updateR(current.rightnode, k)
+
+
+
+#Recalcular bf
+def calculateBalance(AVL):
+    if AVL.root:
+        calculateBalanceR(AVL.root)
+    return AVL
+    
+
+def calculateBalanceR(nodo):
+    if nodo:
+        if nodo.leftnode and nodo.rightnode:
+            nodo.h= 1+ max(nodo.leftnode.h, nodo.rightnode.h)
+        elif nodo.leftnode:
+            nodo.h= 1+ nodo.leftnode.h
+        elif nodo.rightnode:
+            nodo.h= 1+ nodo.rightnode.h
+        else:
+            nodo.h= 0
+
+    #Ahora calcular el bf
+    balanceFactor(nodo)
+
+    calculateBalanceR(nodo.rightnode)
+    calculateBalanceR(nodo.rightnode)
+
+def balanceFactor(nodo):
+    if nodo:
+        if nodo.rightnode and nodo.rightnode:
+            nodo.bf= nodo.lefttnode.h - nodo.rightnode.h
+        else:
+            nodo.bf= nodo.h
+
+#
+def reBalance(AVL):
+    #primero recalculamos los bf
+    calculateBalance(AVL)
+    reBalanceR(AVL.root)
+    
+    return AVL
+
+def reBalanceR(nodo):
+    #esta función busca un nodo que deba balancearse y aplica el balanceo que corresponda
+    if nodo:
+        if nodo.bf>1:
+            rotateRight(nodo)
+        elif nodo.bf<-1:
+            rotateLeft(nodo)
+    reBalanceR(nodo.leftnode)
+    reBalanceR(nodo.rightnode)
+
+
+def rotateLeft(AVL, nodo):
+    newRoot= nodo.rightnode
+    nodo.rightnode= newRoot.leftnode
+
+    if newRoot.leftnode:
+        newRoot.leftnode.parent= nodo
+
+    if nodo.parent==None:
+        AVL.root= newRoot
+    elif nodo.parent.rightnode==nodo:
+        newRoot.parent.rightnode= newRoot
+    else:
+        nodo.parent.leftnode= newRoot
+    newRoot.rightnode= nodo
+    nodo.parent= newRoot
+
+    return newRoot
+
+def rotateRight(AVL, nodo):
+    newRoot= nodo.leftnode
+    nodo.leftnode= newRoot.rightnode
+
+    if newRoot.rightnode:
+        newRoot.rightnode.parent= nodo
+
+    if nodo.parent==None:
+        AVL.root= newRoot
+    elif nodo.parent.rightnode==nodo:
+        nodo.parent.rightnode= newRoot
+    else:
+        nodo.parent.leftnode= newRoot
+    newRoot.rightnode=nodo
+    nodo.parent= newRoot
+
+    return newRoot
