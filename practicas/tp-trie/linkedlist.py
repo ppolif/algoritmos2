@@ -156,7 +156,6 @@ def reverse(list):
         current= current.nextNode
     return reversed
 
-#
 
 
 
