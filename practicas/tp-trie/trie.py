@@ -1,4 +1,4 @@
-from linkedlist import *
+import linkedlist 
 
 class Trie:
     root=None
@@ -34,7 +34,12 @@ def search(T, palabra):
 
 #
 def insert(T, palabra):
-    if T.root and palabra[0]:
+
+    if not T.root:
+        raiz= TrieNode()
+        T.root= raiz
+
+    if palabra[0]:
         nodo= T.root
         
         for i in range (0, len(palabra)):
@@ -64,11 +69,35 @@ def insertAux(padre, letra):
 
     #si no tiene, creamos la lista cuyo primer TrieNode es el caracter actual de la palabra
     else:
-        hijos= LinkedList()
+        hijos= linkedlist.LinkedList()
         hijos.head= insertar
         padre.children= hijos
 
     return insertar
+
+#
+def delete(T, palabra):
+    encontrado= search(T, palabra)
+
+    if encontrado:
+        deleteR(T.root, palabra, 0)
+        return True
+    return False
+
+#
+def deleteR(nodo, palabra, long):
+    if long==len(palabra):
+        nodo.isEndOfWord=False
+        return
+    
+    nodo= buscarHijo(nodo, palabra[long])
+    deleteR(nodo, palabra, long+1)
+
+    if not nodo.children and nodo.isEndOfWord==False:
+        linkedlist.delete(nodo.parent.children, nodo.key)
+        nodo.parent=None
+
+
 
 
     
