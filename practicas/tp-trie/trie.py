@@ -134,6 +134,47 @@ def patronR(nodo, palabra, n, long, total):
             recorrer= recorrer.nextNode
 
 
+#
+def invertida(T, palabra):
+    nodo= T.root
+
+    for i in range (len(palabra)-1, -1, -1):
+        nodo= buscarHijo(nodo, palabra[i])
+        if not nodo:
+            return False
+    return nodo.isEndOfWord
+
+#
+def buscarInvertido(T):
+    documento= listar(T)
+
+    for i in documento:
+        if invertida(T, i):
+            return True
+    return False
+
+#
+def listar(T):
+    if T.root:
+        total=[]
+        palabra=[]
+
+        listarR(T.root, palabra, total)
+        return total
+
+#
+def listarR(nodo, palabra, total):
+    if nodo.key:
+        palabra.append(nodo.key)
+
+    if nodo.isEndOfWord==True:
+        total.append("".join(palabra))
+    
+    if nodo.children:
+        recorrer= nodo.children.head
+        while recorrer:
+            listarR(recorrer, palabra.copy(), total)
+            recorrer= recorrer.nextNode
 
 
 
