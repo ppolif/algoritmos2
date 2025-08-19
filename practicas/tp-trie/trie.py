@@ -97,7 +97,32 @@ def deleteR(nodo, palabra, long):
         linkedlist.delete(nodo.parent.children, nodo.key)
         nodo.parent=None
 
+
+#Función para buscar todas las palabras de un Trie
+def listar(T):
+    if T.root:
+        total=[]
+        palabra=[]
+
+        listarR(T.root, palabra, total)
+        return total
+
 #
+def listarR(nodo, palabra, total):
+    if nodo.key:
+        palabra.append(nodo.key)
+
+    if nodo.isEndOfWord==True:
+        total.append("".join(palabra))
+    
+    if nodo.children:
+        recorrer= nodo.children.head
+        while recorrer:
+            listarR(recorrer, palabra.copy(), total)
+            recorrer= recorrer.nextNode
+
+
+#Punto 4
 def patron(T, prefijo, n):
     encontrado= search(prefijo)
 
@@ -133,8 +158,17 @@ def patronR(nodo, palabra, n, long, total):
             patronR(recorrer, palabra.copy(), n, long+1, total)
             recorrer= recorrer.nextNode
 
+#Punto 5
+def mismoDoc(T1, T2):
+    documento= listar(T1)
 
-#
+    for palabra in documento:
+        if not search(T2, palabra):
+            return False
+    return True
+
+
+#Punto 6
 def invertida(T, palabra):
     nodo= T.root
 
@@ -153,29 +187,23 @@ def buscarInvertido(T):
             return True
     return False
 
-#
-def listar(T):
-    if T.root:
-        total=[]
-        palabra=[]
 
-        listarR(T.root, palabra, total)
-        return total
+#Punto 7
+def autoCompletar(T, cadena):
+    palabra= []
 
-#
-def listarR(nodo, palabra, total):
-    if nodo.key:
-        palabra.append(nodo.key)
+    nodo= T.root
+    for i in range (0, len(cadena)):
+        nodo= buscarHijo(nodo, cadena[i])
+        if not nodo:
+            return palabra
 
-    if nodo.isEndOfWord==True:
-        total.append("".join(palabra))
-    
     if nodo.children:
-        recorrer= nodo.children.head
-        while recorrer:
-            listarR(recorrer, palabra.copy(), total)
-            recorrer= recorrer.nextNode
+        while linkedlist.length(nodo.children)==1 and not nodo.isEndOfWord:
+            nodo= nodo.children.head
+            palabra.append(nodo.key)
 
+    return "".join(palabra)
 
 
     
