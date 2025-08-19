@@ -97,6 +97,43 @@ def deleteR(nodo, palabra, long):
         linkedlist.delete(nodo.parent.children, nodo.key)
         nodo.parent=None
 
+#
+def patron(T, prefijo, n):
+    encontrado= search(prefijo)
+
+    if not encontrado:
+        return []
+    
+    totalPalabras=[]
+    palabra= list(prefijo)
+
+    nodo=T.root
+    for i in range (0, len(prefijo)):
+        nodo= buscarHijo(nodo, prefijo[i])
+
+    numero= n-len(prefijo)
+        
+    patronR(nodo, palabra, numero, 0, totalPalabras)
+    return totalPalabras
+
+
+#
+def patronR(nodo, palabra, n, long, total):
+    if long!=0:
+        palabra.append(nodo.key)
+
+    if long==n:
+        if nodo.isEndOfWord:
+            total.append("".join(palabra))
+        return
+
+    if nodo.children:
+        recorrer= nodo.children.head
+        while recorrer:
+            patronR(recorrer, palabra.copy(), n, long+1, total)
+            recorrer= recorrer.nextNode
+
+
 
 
 
